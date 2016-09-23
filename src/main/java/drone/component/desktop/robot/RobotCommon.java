@@ -5,37 +5,33 @@ import java.awt.AWTException;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.MouseInfo;
-import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
-import java.awt.color.ColorSpace;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorConvertOp;
-import java.io.FileOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+import com.google.common.io.Files;
 
 public class RobotCommon {
 	private static JLabel lAddPrice100Position;
@@ -73,6 +69,7 @@ public class RobotCommon {
 	}
 
 	public void start() throws AWTException {
+		loadPosition();
 		Toolkit.getDefaultToolkit().addAWTEventListener(new Listener(), AWTEvent.MOUSE_EVENT_MASK | AWTEvent.FOCUS_EVENT_MASK);
 		JFrame frm = new JFrame();
 		JPanel pnl = (JPanel) frm.getContentPane();
@@ -144,6 +141,7 @@ public class RobotCommon {
 		btn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				savePosition();
 				new RobotThread().start();
 			}
 		});
@@ -152,34 +150,42 @@ public class RobotCommon {
 		frm.setSize(new Dimension(550, 220));
 		frm.setVisible(true);
 	}
-
-
-	public static void clickLMouse(Robot r, int x, int y) {
-		r.mouseMove(x, y);
-		r.mousePress(InputEvent.BUTTON1_MASK);
-		r.delay(10);
-		r.mouseRelease(InputEvent.BUTTON1_MASK);
-		r.delay(10);
-	}
-
-	public static void clickRMouse(Robot r, int x, int y) {
-		r.mouseMove(x, y);
-		r.mousePress(InputEvent.BUTTON3_MASK);
-		r.delay(500);
-		r.mouseRelease(InputEvent.BUTTON3_MASK);
-		r.delay(500);
-	}
-
-	public static void pressKeys(Robot r, int[] ks, int delay) {
-		for (int i = 0; i < ks.length; i++) {
-			r.keyPress(ks[i]);
-			r.delay(10);
-			r.keyRelease(ks[i]);
-			r.delay(delay);
+	
+	private void savePosition() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("BTN_PRICE_ADD_100_X=").append(BTN_PRICE_ADD_100_X).append("\n");
+		sb.append("BTN_PRICE_ADD_100_Y=").append(BTN_PRICE_ADD_100_Y).append("\n");
+		sb.append("BTN_BID_X=").append(BTN_BID_X).append("\n");
+		sb.append("BTN_BID_Y=").append(BTN_BID_Y).append("\n");
+		sb.append("BTN_BID_CONFIRM_X=").append(BTN_BID_CONFIRM_X).append("\n");
+		sb.append("BTN_BID_CONFIRM_Y=").append(BTN_BID_CONFIRM_Y).append("\n");
+		String filePath = getPropsFilePath();
+		try {
+			Files.write(sb, new File(filePath), Charset.defaultCharset());
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
-
-
+	
+	private String getPropsFilePath() {
+		return System.getProperty("user.home") + File.separator + ".PaiPai.properties";
+	}
+	
+	private void loadPosition() {
+		Properties props = new Properties();
+		String filePath = getPropsFilePath();
+		try {
+			props.load(new FileInputStream(new File(filePath)));
+			BTN_PRICE_ADD_100_X = Integer.parseInt(props.getProperty("BTN_PRICE_ADD_100_X"));
+			BTN_PRICE_ADD_100_Y = Integer.parseInt(props.getProperty("BTN_PRICE_ADD_100_Y"));
+			BTN_BID_X = Integer.parseInt(props.getProperty("BTN_BID_X"));
+			BTN_BID_Y = Integer.parseInt(props.getProperty("BTN_BID_Y"));
+			BTN_BID_CONFIRM_X = Integer.parseInt(props.getProperty("BTN_BID_CONFIRM_X"));
+			BTN_BID_CONFIRM_Y = Integer.parseInt(props.getProperty("BTN_BID_CONFIRM_Y"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static class RobotThread extends Thread {
 		private static final SimpleDateFormat dateSdf = new SimpleDateFormat("yyyy-MM-dd");
