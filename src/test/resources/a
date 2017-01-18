@@ -1,0 +1,53 @@
+
+<plugin> 
+
+    <groupId>org.apache.maven.plugins</groupId> 
+
+    <artifactId>maven-jar-plugin</artifactId> 
+
+    <configuration> 
+
+        <archive> 
+
+            <manifest> 
+
+                <mainClass>org.noahx.onejartest.Launcher</mainClass> 
+
+            </manifest> 
+
+        </archive> 
+
+    </configuration> 
+</plugin> 
+
+<plugin> 
+
+    <groupId>com.jolira</groupId> 
+
+    <artifactId>onejar-maven-plugin</artifactId> 
+
+    <version>1.4.4</version> 
+
+    <executions> 
+
+        <execution> 
+
+            <configuration> 
+
+                <attachToBuild>true</attachToBuild> 
+
+                <classifier>onejar</classifier> 
+
+            </configuration> 
+
+            <goals> 
+
+                <goal>one-jar</goal> 
+
+            </goals> 
+
+        </execution> 
+
+    </executions> 
+
+</plugin> 

@@ -1,4 +1,4 @@
-package drone.component.desktop.robot;
+package com.yj.robot;
 
 import java.awt.AWTEvent;
 import java.awt.AWTException;
@@ -89,9 +89,9 @@ public class RobotCommon {
 		pnl.add(row3Pnl);
 		pnl.add(row4Pnl);
 
-		lAddPrice100Position = new JLabel("加价100按钮坐标:" + BTN_PRICE_ADD_100_X + "." + BTN_PRICE_ADD_100_Y);
+		lAddPrice100Position = new JLabel("自定义加价按钮坐标:" + BTN_PRICE_ADD_100_X + "." + BTN_PRICE_ADD_100_Y);
 		row1Pnl.add(lAddPrice100Position);
-		JButton btnGetAddPrice100Position = new JButton("获取加价100按钮坐标");
+		JButton btnGetAddPrice100Position = new JButton("获取加价按钮坐标");
 		btnGetAddPrice100Position.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -122,20 +122,22 @@ public class RobotCommon {
 		});
 		row3Pnl.add(btnGetBidConfirmBtnPosition);
 		
+		JLabel bidPriceLabel = new JLabel("加价时间");
+		row4Pnl.add(bidPriceLabel);
 		tBidPriceBaseTime = createTextField();
 		row4Pnl.add(tBidPriceBaseTime);
-		JLabel bidPriceLabel = new JLabel("秒的当前价加");
-		row4Pnl.add(bidPriceLabel);
+		tBidPriceBaseTime.setText("11:29:47");
 
 		tBidStep = createTextField();
-		row4Pnl.add(tBidStep);
-		JLabel bidStepLabel = new JLabel("元");
-		row4Pnl.add(bidStepLabel);
+//		row4Pnl.add(tBidStep);
+//		JLabel bidStepLabel = new JLabel("元");
+//		row4Pnl.add(bidStepLabel);
 
-		JLabel bidTimeLabel = new JLabel("出价时间(s)");
+		JLabel bidTimeLabel = new JLabel("出价时间");
 		row4Pnl.add(bidTimeLabel);
 		tBidTime = createTextField();
 		row4Pnl.add(tBidTime);
+		tBidTime.setText("11:29:55");
 
 		JButton btn = new JButton("执行策略");
 		btn.addActionListener(new ActionListener() {
@@ -193,12 +195,12 @@ public class RobotCommon {
 
 		public void run() {
 			String bidPriceBaseTime = RobotCommon.tBidPriceBaseTime.getText().trim();
-			int bidStep = Integer.parseInt(RobotCommon.tBidStep.getText());
+//			int bidStep = Integer.parseInt(RobotCommon.tBidStep.getText());
+			int bidStep = 100;
 			String bidTime = RobotCommon.tBidTime.getText();
-			System.out.println("执行策略:在" + bidPriceBaseTime + "秒的价格上加价" + bidStep + "元, 然后在" + bidTime + "秒出价");
+			System.out.println("执行策略:在" + bidPriceBaseTime + "秒加价" + ", 然后在" + bidTime + "秒出价");
 
 			String curDate = dateSdf.format(new Date());
-
 			scheduleBidPriceCalTask(bidPriceBaseTime, bidStep, curDate);
 
 			scheduleBidTask(bidTime, curDate);
@@ -253,7 +255,8 @@ public class RobotCommon {
 				robot = new Robot();
 				// 加价
 				robot.mouseMove(BTN_PRICE_ADD_100_X, BTN_PRICE_ADD_100_Y);
-				int clickTimes = bidStep / 100;
+//				int clickTimes = bidStep / 100;
+				int clickTimes = 1;
 				for (int i = 0; i < clickTimes; i++) {
 					clickMouse(robot);
 				}
