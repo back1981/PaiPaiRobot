@@ -210,6 +210,7 @@ public class RobotCommon {
 			try {
 //				Date bidDate = fullSdf.parse(curDate + " " + time + bidTime);
 				Date bidDate = fullSdf.parse(curDate + " " + bidTime);
+				bidDate = new Date(bidDate.getTime() + 300);//500 is ms
 				Timer timer = new Timer();
 				timer.schedule(new BidTask(), bidDate);
 			} catch (ParseException e) {
@@ -224,6 +225,7 @@ public class RobotCommon {
 			Date bidPriceCalDate = null;
 			try {
 				bidPriceCalDate = fullSdf.parse(bidPriceCalTime);
+				bidPriceCalDate = new Date(bidPriceCalDate.getTime() + 200);//200 is ms
 				System.out.println("bidPriceCalDate:" + bidPriceCalDate);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
