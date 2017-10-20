@@ -23,21 +23,26 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import com.google.common.io.Files;
 import com.yj.demo.tools.ScreenRectangleSelecter;
 
 @Component
-public class RobotCommon {
+public class RobotGUI implements ApplicationContextAware{
 	private static JLabel lAddPrice100Position;
 	private static JLabel lBidBtnPosition;
 	private static JLabel lBidConfirmBtnPosition;
 	private static JLabel lSelectDealPriceRectangle;
 	private static JLabel lSelectMyPriceRectangle;
 	public static JTextField tBidTime;
+	public static JTextField tBidTimeMillis;
 	public static JTextField tBidPriceBaseTime;
+	public static JTextField tBidPriceBaseTimeMillis;
 	private static JTextField tBidStep;
 
 	@Autowired
@@ -52,9 +57,9 @@ public class RobotCommon {
 		};
 	}
 
-	public static void main(String[] args) throws AWTException {
-		new RobotCommon().start();
-	}
+//	public static void main(String[] args) throws AWTException {
+//		new RobotGUI().start();
+//	}
 
 	public void start() throws AWTException {
 		loadPosition();
@@ -156,8 +161,11 @@ public class RobotCommon {
 		row6Pnl.add(bidPriceLabel);
 		tBidPriceBaseTime = createTextField();
 		row6Pnl.add(tBidPriceBaseTime);
+		row6Pnl.add(new JLabel("."));
 		tBidPriceBaseTime.setText("11:29:45");
-
+		tBidPriceBaseTimeMillis = createTextField();
+		tBidPriceBaseTimeMillis.setText(String.valueOf(PaiPaiConfig.CAL_BID_PRICE_MILLIS));
+		row6Pnl.add(tBidPriceBaseTimeMillis);
 		tBidStep = createTextField();
 //		row4Pnl.add(tBidStep);
 //		JLabel bidStepLabel = new JLabel("Ôª");
@@ -167,19 +175,23 @@ public class RobotCommon {
 		row6Pnl.add(bidTimeLabel);
 		tBidTime = createTextField();
 		row6Pnl.add(tBidTime);
-		tBidTime.setText("11:29:56");
-
+		tBidTime.setText("11:29:59");
+		tBidTimeMillis = createTextField();
+		row6Pnl.add(new JLabel("."));
+		tBidTimeMillis.setText(String.valueOf(PaiPaiConfig.BID_MILLIS));
+		row6Pnl.add(tBidTimeMillis);
+		
 		JButton btn = new JButton("Ö´ÐÐ²ßÂÔ");
 		btn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				savePosition();
-				robotThread.start();
+				applicationContext.getBean(RobotThread.class).start();
 			}
 		});
 		row6Pnl.add(btn);
 
-		frm.setSize(new Dimension(550, 320));
+		frm.setSize(new Dimension(650, 320));
 		frm.setVisible(true);
 	}
 	
@@ -200,6 +212,9 @@ public class RobotCommon {
 		sb.append("MY_PRICE_SCREEN_RECT_Y=").append(PaiPaiConfig.MY_PRICE_SCREEN_RECT_Y).append("\n");
 		sb.append("MY_PRICE_SCREEN_RECT_W=").append(PaiPaiConfig.MY_PRICE_SCREEN_RECT_W).append("\n");
 		sb.append("MY_PRICE_SCREEN_RECT_H=").append(PaiPaiConfig.MY_PRICE_SCREEN_RECT_H).append("\n");
+		
+		sb.append("CAL_BID_PRICE_MILLIS=").append(tBidPriceBaseTimeMillis.getText()).append("\n");
+		sb.append("BID_MILLIS=").append(tBidTimeMillis.getText()).append("\n");
 		String filePath = getPropsFilePath();
 		try {
 			Files.write(sb, new File(filePath), Charset.defaultCharset());
@@ -232,7 +247,16 @@ public class RobotCommon {
 			PaiPaiConfig.MY_PRICE_SCREEN_RECT_Y = Integer.parseInt(props.getProperty("MY_PRICE_SCREEN_RECT_Y"));
 			PaiPaiConfig.MY_PRICE_SCREEN_RECT_W = Integer.parseInt(props.getProperty("MY_PRICE_SCREEN_RECT_W"));
 			PaiPaiConfig.MY_PRICE_SCREEN_RECT_H = Integer.parseInt(props.getProperty("MY_PRICE_SCREEN_RECT_H"));
-			
+			try {
+				PaiPaiConfig.CAL_BID_PRICE_MILLIS = Integer.parseInt(props.getProperty("CAL_BID_PRICE_MILLIS"));
+			} catch(Exception e) {
+				PaiPaiConfig.CAL_BID_PRICE_MILLIS = 0;
+			}
+			try {
+				PaiPaiConfig.BID_MILLIS = Integer.parseInt(props.getProperty("BID_MILLIS"));
+			} catch(Exception e) {
+				PaiPaiConfig.BID_MILLIS  = 0;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -267,5 +291,17 @@ public class RobotCommon {
 				PaiPaiConfig.capturePositionStatus = 0;
 			}
 		}
+	}
+
+
+
+
+
+
+	ApplicationContext applicationContext;
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 }

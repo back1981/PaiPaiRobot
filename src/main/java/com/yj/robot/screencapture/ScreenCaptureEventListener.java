@@ -1,5 +1,8 @@
 package com.yj.robot.screencapture;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
@@ -26,25 +29,36 @@ public class ScreenCaptureEventListener {
 	@Autowired
 	BidContext bidCtx;
 
+	ExecutorService executor = Executors.newFixedThreadPool(20);
+
 	public ScreenCaptureEventListener() {
 	}
 
 	@Subscribe
 	public void listen(ScreenCaptureEvent event) {
 		logger.info(event.toString());
-		try {
-			if (event.getScreenSizeType() == ScreenCaptureEnum.CURRENT_LOWEST_DEAL_PRICE) {
-				int price = imageParser.parseNumber(event.getCapturedScreenImagePath());
-				eventBusHolder.getPriceEventBus()
-						.post(new PriceEvent(PriceEnum.CUR_LOWEST_DEAL_PRICE, price, event.getDate()));
-			} else if (event.getScreenSizeType() == ScreenCaptureEnum.MY_BID_PRICE) {
-				int price = imageParser.parseNumber(event.getCapturedScreenImagePath());
-				logger.info("我的价格：{}", price);
-				bidCtx.setMyBidPrice(price);
+		executor.submit(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					if (event.getScreenSizeType() == ScreenCaptureEnum.CURRENT_LOWEST_DEAL_PRICE) {
+						int price = imageParser.parseNumber(event.getCapturedScreenImagePath());
+						eventBusHolder.getPriceEventBus()
+								.post(new PriceEvent(PriceEnum.CUR_LOWEST_DEAL_PRICE, price, event.getDate()));
+					} else if (event.getScreenSizeType() == ScreenCaptureEnum.MY_BID_PRICE) {
+						int price = imageParser.parseNumber(event.getCapturedScreenImagePath());
+						logger.info("我的价格：{}", price);
+						bidCtx.setMyBidPrice(price);
+						Thread.sleep(3000);
+					}
+					Thread.sleep(3000);
+				} catch (Exception e) {
+					logger.error(event.toString(), e);
+				}
 			}
-		} catch (Exception e) {
-			logger.error(event.toString(), e);
-		}
+
+		});
+
 	}
 
 	@PostConstruct

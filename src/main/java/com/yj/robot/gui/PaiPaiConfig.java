@@ -31,4 +31,7 @@ public class PaiPaiConfig {
 	public static int STATUS_CAPTURE_ADD_PRICE_100 = 0x1;
 	public static int STATUS_CAPTURE_BID = 0x2;
 	public static int STATUS_CAPTURE_BID_CONFIRM = 0x4;
+	
+	public static int CAL_BID_PRICE_MILLIS = 200;
+	public static int BID_MILLIS = 300;
 }

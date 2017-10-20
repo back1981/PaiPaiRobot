@@ -9,6 +9,7 @@ import java.util.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.yj.robot.screencapture.ScreenCaptureEnum;
@@ -22,6 +23,7 @@ import com.yj.robot.task.EventBusHolder;
  *
  */
 @Component
+@Scope("prototype")
 public class BidPriceCalTask extends UITimerTask {
 	private static final Logger logger = LoggerFactory.getLogger(BidPriceCalTask.class);
 
@@ -74,6 +76,6 @@ public class BidPriceCalTask extends UITimerTask {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.MILLISECOND, 0);
 		cal.add(Calendar.SECOND, 5);
-		timer.scheduleAtFixedRate(screenCaptureTask, cal.getTime(), 1000);
+		timer.scheduleAtFixedRate(screenCaptureTask, cal.getTime(), 500);
 	}
 }

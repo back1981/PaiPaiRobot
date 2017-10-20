@@ -28,6 +28,7 @@ public class PriceEventListener {
 		if(event.getType() == PriceEnum.CUR_LOWEST_DEAL_PRICE) {
 			if(bitCtx.getMyBidPrice() > 0)  {
 				if(event.getPrice() + 300 >= bitCtx.getMyBidPrice()) {//我的价格在价格接受区间内, 必须出价
+					logger.info("价格进入出价区间");
 					new BidTask().run();
 					eventBusHolder.getPriceEventBus().unregister(this);
 				}

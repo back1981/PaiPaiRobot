@@ -5,12 +5,12 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
-import com.yj.robot.gui.RobotCommon;
+import com.yj.robot.gui.RobotGUI;
 
 @SpringBootApplication
 public class PaiPaiMain implements CommandLineRunner {
 	@Autowired
-	RobotCommon robot;
+	RobotGUI robot;
 
 	public static void main(String[] args) {
 		new SpringApplicationBuilder(PaiPaiMain.class).headless(false).web(false).run(args);

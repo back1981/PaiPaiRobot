@@ -41,7 +41,7 @@ public class ScreenCaptureEvent {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("screenSizeType=").append(screenSizeType.name()).append(", ");
-		sb.append("screenSizeType").append(capturedScreenImagePath).append(", ");
+		sb.append("capturedScreenImagePath=").append(capturedScreenImagePath).append(", ");
 		sb.append("date=").append(date);
 		return sb.toString();
 	}
