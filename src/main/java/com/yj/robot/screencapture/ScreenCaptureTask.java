@@ -24,7 +24,7 @@ public class ScreenCaptureTask extends PublisherTask {
 	}
 	@Override
 	public void run() {
-		logger.info("start screen capture");
+//		logger.info("start screen capture");
 		String filePath = "C:\\studio\\ws\\paichepai_snapshot\\" + type.name() + "-" + sdf.format(new Date()) + ".png";
 		try {
 			if(type == ScreenCaptureEnum.FULL) {

@@ -29,6 +29,8 @@ public class BidPriceCalTask extends UITimerTask {
 
 	@Autowired
 	EventBusHolder eventBusHolder;
+	
+	public static Timer previousMonitorTimer = null;
 
 	public BidPriceCalTask() {
 	}
@@ -47,7 +49,10 @@ public class BidPriceCalTask extends UITimerTask {
 			robot.mouseMove(PaiPaiConfig.BTN_BID_X, PaiPaiConfig.BTN_BID_Y);
 			clickMouse(robot);
 			
-			scheduleDealPriceMonitorTask();
+			logger.info("¼à¿ØÆô¶¯£º{}", (previousMonitorTimer != null));
+			if(previousMonitorTimer == null) {
+				previousMonitorTimer = scheduleDealPriceMonitorTask();
+			} 
 			
 			try {
 				Thread.sleep(1000);// capture capture may need some time, so sleep a while
@@ -69,13 +74,14 @@ public class BidPriceCalTask extends UITimerTask {
 
 	}
 	
-	private void scheduleDealPriceMonitorTask() {
+	private Timer scheduleDealPriceMonitorTask() {
 		Timer timer = new Timer();
 		Rectangle rectangle = new Rectangle(PaiPaiConfig.DEAL_PRICE_SCREEN_RECT_X, PaiPaiConfig.DEAL_PRICE_SCREEN_RECT_Y, PaiPaiConfig.DEAL_PRICE_SCREEN_RECT_W, PaiPaiConfig.DEAL_PRICE_SCREEN_RECT_H);
 		ScreenCaptureTask screenCaptureTask = new ScreenCaptureTask(eventBusHolder.getScreenCaptureEventBus(), rectangle, ScreenCaptureEnum.CURRENT_LOWEST_DEAL_PRICE);
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.MILLISECOND, 0);
-		cal.add(Calendar.SECOND, 5);
-		timer.scheduleAtFixedRate(screenCaptureTask, cal.getTime(), 500);
+		cal.add(Calendar.SECOND, 1);
+		timer.scheduleAtFixedRate(screenCaptureTask, cal.getTime(), 200);
+		return timer;
 	}
 }

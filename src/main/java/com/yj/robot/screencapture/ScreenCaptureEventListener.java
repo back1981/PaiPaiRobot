@@ -36,7 +36,11 @@ public class ScreenCaptureEventListener {
 
 	@Subscribe
 	public void listen(ScreenCaptureEvent event) {
-		logger.info(event.toString());
+		logger.debug("isBiding={}, {}", bidCtx.isBiding(), event.toString());
+		if(!bidCtx.isBiding()) {
+			return;
+		}
+		
 		executor.submit(new Runnable() {
 			@Override
 			public void run() {
@@ -49,9 +53,9 @@ public class ScreenCaptureEventListener {
 						int price = imageParser.parseNumber(event.getCapturedScreenImagePath());
 						logger.info("我的价格：{}", price);
 						bidCtx.setMyBidPrice(price);
-						Thread.sleep(3000);
+//						Thread.sleep(3000);
 					}
-					Thread.sleep(3000);
+//					Thread.sleep(3000);
 				} catch (Exception e) {
 					logger.error(event.toString(), e);
 				}

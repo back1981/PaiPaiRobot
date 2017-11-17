@@ -175,7 +175,7 @@ public class RobotGUI implements ApplicationContextAware{
 		row6Pnl.add(bidTimeLabel);
 		tBidTime = createTextField();
 		row6Pnl.add(tBidTime);
-		tBidTime.setText("11:29:59");
+		tBidTime.setText("11:29:58");
 		tBidTimeMillis = createTextField();
 		row6Pnl.add(new JLabel("."));
 		tBidTimeMillis.setText(String.valueOf(PaiPaiConfig.BID_MILLIS));
