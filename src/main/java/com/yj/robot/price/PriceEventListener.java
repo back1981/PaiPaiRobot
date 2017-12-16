@@ -30,19 +30,23 @@ public class PriceEventListener {
 		}
 		
 		if(event.getType() == PriceEnum.CUR_LOWEST_DEAL_PRICE) {
-			if(bidCtx.getMyBidPrice() > 0)  {				
-				if(event.getPrice() + 400 >= bidCtx.getMyBidPrice()) {//当前最低成交价+300是当前可接受的最高价，+400是为了做一些提前出价，所以等待600毫秒后出价
+			if(bidCtx.getMyBidPrice() > 0)  {	
+				if(event.getPrice() + 300 >= bidCtx.getMyBidPrice()) {//当前最低成交价+300是当前可接受的最高价，+400是为了做一些提前出价，所以等待600毫秒后出价
 					logger.info("价格进入出价区间, 当前最低成交价 {}", event.getPrice());
-					try {
-						Thread.sleep(600);
-					} catch (InterruptedException e) {
-					}
 					new BidTask(bidCtx, "进入出价区间").run();
+				} 
+//				else if(event.getPrice() + 400 >= bidCtx.getMyBidPrice()) {//当前最低成交价+300是当前可接受的最高价，+400是为了做一些提前出价，所以等待600毫秒后出价
+//					logger.info("即将价格进入出价区间, 当前最低成交价 {}", event.getPrice());
 //					try {
-//						//确定提交之后不再需要接收信息
-//						eventBusHolder.getPriceEventBus().unregister(this);
-//					} catch(Exception e) {}
-				}
+//						long waitTime = 800 - event.getTimeCostAtParsePrice();
+//						if(waitTime > 0) {
+//							logger.info("等待{}毫秒再提交", waitTime);
+//							Thread.sleep(waitTime);
+//						}
+//					} catch (InterruptedException e) {
+//					}
+//					new BidTask(bidCtx, "即将进入出价区间").run();
+//				}
 			}
 		}
 	}

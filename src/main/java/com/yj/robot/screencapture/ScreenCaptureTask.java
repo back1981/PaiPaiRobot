@@ -9,22 +9,28 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.EventBus;
 import com.yj.demo.tools.ScreenCapture;
+import com.yj.robot.bid.BidContext;
 import com.yj.robot.task.PublisherTask;
 
 public class ScreenCaptureTask extends PublisherTask {
 	private static final Logger logger = LoggerFactory.getLogger(ScreenCaptureTask.class);
 	Rectangle rectangle;
-	SimpleDateFormat sdf = new SimpleDateFormat("HH-mm-ss");
+	SimpleDateFormat sdf = new SimpleDateFormat("HH-mm-ss-SSS");
 	ScreenCapture screenCapture = new ScreenCapture();
 	ScreenCaptureEnum type;
-	public ScreenCaptureTask(EventBus eventBus, Rectangle rectangle, ScreenCaptureEnum type) {
+	BidContext bidCtx;
+	public ScreenCaptureTask(BidContext bidCtx, EventBus eventBus, Rectangle rectangle, ScreenCaptureEnum type) {
 		super(eventBus);
 		this.type = type;
 		this.rectangle = rectangle;
+		this.bidCtx = bidCtx;
 	}
 	@Override
 	public void run() {
-//		logger.info("start screen capture");
+		if(!bidCtx.isBiding()) {
+			return;
+		}
+		logger.debug("start screen capture");
 		String filePath = "C:\\studio\\ws\\paichepai_snapshot\\" + type.name() + "-" + sdf.format(new Date()) + ".png";
 		try {
 			if(type == ScreenCaptureEnum.FULL) {

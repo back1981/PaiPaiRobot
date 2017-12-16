@@ -6,12 +6,25 @@ public class PriceEvent {
 	private PriceEnum type;
 	private Date date;
 	private int price;
-	
-	public PriceEvent(PriceEnum type, int price, Date date) {
+	private long timeCostAtParsePrice;
+	public PriceEvent(PriceEnum type, int price, Date date, long timeCostAtParsePrice) {
 		this.type = type;
 		this.price = price;
 		this.date = date;
+		this.timeCostAtParsePrice = timeCostAtParsePrice;
 	}
+	
+	
+	public long getTimeCostAtParsePrice() {
+		return timeCostAtParsePrice;
+	}
+
+
+	public void setTimeCostAtParsePrice(long timeCostAtParsePrice) {
+		this.timeCostAtParsePrice = timeCostAtParsePrice;
+	}
+
+
 	public PriceEnum getType() {
 		return type;
 	}

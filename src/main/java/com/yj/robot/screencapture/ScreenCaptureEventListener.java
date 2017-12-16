@@ -37,25 +37,34 @@ public class ScreenCaptureEventListener {
 	@Subscribe
 	public void listen(ScreenCaptureEvent event) {
 		logger.debug("isBiding={}, {}", bidCtx.isBiding(), event.toString());
-		if(!bidCtx.isBiding()) {
+		if (!bidCtx.isBiding()) {
 			return;
 		}
-		
+
 		executor.submit(new Runnable() {
 			@Override
 			public void run() {
 				try {
 					if (event.getScreenSizeType() == ScreenCaptureEnum.CURRENT_LOWEST_DEAL_PRICE) {
+						long start = System.currentTimeMillis();
 						int price = imageParser.parseNumber(event.getCapturedScreenImagePath());
-						eventBusHolder.getPriceEventBus()
-								.post(new PriceEvent(PriceEnum.CUR_LOWEST_DEAL_PRICE, price, event.getDate()));
+						long timeCost = System.currentTimeMillis() - start;
+						eventBusHolder.getPriceEventBus().post(
+								new PriceEvent(PriceEnum.CUR_LOWEST_DEAL_PRICE, price, event.getDate(), timeCost));
 					} else if (event.getScreenSizeType() == ScreenCaptureEnum.MY_BID_PRICE) {
-						int price = imageParser.parseNumber(event.getCapturedScreenImagePath());
-						logger.info("我的价格：{}", price);
-						bidCtx.setMyBidPrice(price);
-//						Thread.sleep(3000);
+						while (true) {
+							try {
+								int price = imageParser.parseNumber(event.getCapturedScreenImagePath());
+								logger.info("我的价格：{}", price);
+								bidCtx.setMyBidPrice(price);
+								break;
+							} catch (Exception e) {
+								Thread.sleep(5);
+							}
+						}
+						// Thread.sleep(3000);
 					}
-//					Thread.sleep(3000);
+					// Thread.sleep(3000);
 				} catch (Exception e) {
 					logger.error(event.toString(), e);
 				}

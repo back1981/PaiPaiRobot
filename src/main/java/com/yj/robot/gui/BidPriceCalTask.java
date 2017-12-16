@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.yj.robot.bid.BidContext;
 import com.yj.robot.screencapture.ScreenCaptureEnum;
 import com.yj.robot.screencapture.ScreenCaptureTask;
 import com.yj.robot.task.EventBusHolder;
@@ -29,6 +30,9 @@ public class BidPriceCalTask extends UITimerTask {
 
 	@Autowired
 	EventBusHolder eventBusHolder;
+	
+	@Autowired
+	BidContext bidCtx;
 	
 	public static Timer previousMonitorTimer = null;
 
@@ -63,7 +67,7 @@ public class BidPriceCalTask extends UITimerTask {
 			Rectangle rectangle = new Rectangle(PaiPaiConfig.MY_PRICE_SCREEN_RECT_X,
 					PaiPaiConfig.MY_PRICE_SCREEN_RECT_Y, PaiPaiConfig.MY_PRICE_SCREEN_RECT_W,
 					PaiPaiConfig.MY_PRICE_SCREEN_RECT_H);
-			timer.schedule(new ScreenCaptureTask(eventBusHolder.getScreenCaptureEventBus(), rectangle,
+			timer.schedule(new ScreenCaptureTask(bidCtx, eventBusHolder.getScreenCaptureEventBus(), rectangle,
 					ScreenCaptureEnum.MY_BID_PRICE), 0);
 			
 
@@ -77,11 +81,11 @@ public class BidPriceCalTask extends UITimerTask {
 	private Timer scheduleDealPriceMonitorTask() {
 		Timer timer = new Timer();
 		Rectangle rectangle = new Rectangle(PaiPaiConfig.DEAL_PRICE_SCREEN_RECT_X, PaiPaiConfig.DEAL_PRICE_SCREEN_RECT_Y, PaiPaiConfig.DEAL_PRICE_SCREEN_RECT_W, PaiPaiConfig.DEAL_PRICE_SCREEN_RECT_H);
-		ScreenCaptureTask screenCaptureTask = new ScreenCaptureTask(eventBusHolder.getScreenCaptureEventBus(), rectangle, ScreenCaptureEnum.CURRENT_LOWEST_DEAL_PRICE);
+		ScreenCaptureTask screenCaptureTask = new ScreenCaptureTask(bidCtx, eventBusHolder.getScreenCaptureEventBus(), rectangle, ScreenCaptureEnum.CURRENT_LOWEST_DEAL_PRICE);
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.MILLISECOND, 0);
 		cal.add(Calendar.SECOND, 1);
-		timer.scheduleAtFixedRate(screenCaptureTask, cal.getTime(), 200);
+		timer.scheduleAtFixedRate(screenCaptureTask, cal.getTime(), 100);
 		return timer;
 	}
 }
